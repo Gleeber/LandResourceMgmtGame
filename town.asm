@@ -23,7 +23,7 @@ printVillage:
         push ecx
 
         mov edi, villageFormat
-        mov esi, BYTE[eax+ecx]
+        mov esi, BYTE[eax+ecx] ; improper size?
         extern printf
         call printf
 
