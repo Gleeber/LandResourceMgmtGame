@@ -1,6 +1,16 @@
+global testingFunction
+
 global buildVillage
-global recruitVillager
 global printVillage
+
+global recruitVillager
+global getVillagers
+
+extern printf
+
+testingFunction:
+    
+ret
 
 buildVillage:
     mov edi,[villageSize]    ; Village size (in bytes)
@@ -9,34 +19,55 @@ buildVillage:
 
     mov ecx, 0
     fillVillage:
-        mov BYTE[eax + ecx],'a'
+        mov BYTE[eax + ecx],'_'
         add ecx,1
         cmp ecx,[villageSize]
         jl fillVillage
 ret
 
 printVillage:
-    mov eax, edi ; village pointer
+    mov eax, [esp+4] ; village pointer
     mov ecx, 0
     startLoop:
         push eax
         push ecx
 
-        mov edi, villageFormat
-        mov esi, BYTE[eax+ecx]
-        extern printf
+        push DWORD[eax]
+        push villageFormat
         call printf
+        add esp,8
 
         pop ecx
         pop eax
-        add eax, 1
+        ;add eax, 1
         add ecx, 1
         cmp ecx,DWORD[villageSize]
         jl startLoop
+    
+    push printNewLine
+    call printf
+    add esp,4
 ret
 
 recruitVillager: 
+    add DWORD[villagers],1
+    sub DWORD[funds],1
+    call getVillagers
+    call getFunds
+ret
 
+getVillagers:
+    mov eax, DWORD[villagers]
+ret
+
+printVillagers:
+
+ret
+
+
+
+getFunds:
+    mov eax, DWORD[funds]
 ret
 
 space:
@@ -45,6 +76,20 @@ space:
 villageFormat:
     db ` %c`,0
 
-section .data
+;section .data
+printNewLine:
+	db `\n`,0
+
+printChar:
+    db `a`,0
+
 villageSize:
-    dd 10
+    dd 15
+
+section .data
+villagers: 
+    dd 0
+    db 'Number of villagers: ',0
+
+funds:
+    dd 100

@@ -6,14 +6,21 @@
 #include <iostream>
 using std::cout;
 using std::endl;
-#include <stdlib.h>
+
+extern "C" void testingFunction(void);
 
 extern "C" char * buildVillage();
-extern "C" void recruitVillager(void *);
 extern "C" void printVillage(char *);
+
+extern "C" void recruitVillager();
+extern "C" int getVillagers();
 
 int main () {
     char *villagePtr = buildVillage();
     printVillage(villagePtr);
+
+    recruitVillager();
+    recruitVillager();
+    cout << "Number of villagers: " << getVillagers() << endl;
     return 0;
 }
