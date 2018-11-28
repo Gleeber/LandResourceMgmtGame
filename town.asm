@@ -39,7 +39,7 @@ printVillage:
 
         pop ecx
         pop eax
-        ;add eax, 1
+        add eax, 1
         add ecx, 1
         cmp ecx,DWORD[villageSize]
         jl startLoop
