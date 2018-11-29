@@ -4,6 +4,7 @@
 //This is loosely based on the "Kingdom" series, mostly just resouce management
 
 #include <iostream>
+using std::cin;
 using std::cout;
 using std::endl;
 #include <string>
@@ -24,25 +25,18 @@ extern "C" int getFunds();
 
 int main () {
     char *villagePtr = buildVillage();
-    //do{
-	cout << "Coin: " << getFunds() << endl;
-	cout << "Number of villagers: " << getVillagers() << endl;
-
-	printVillage(villagePtr);
-	recruitVillager();
-	recruitVillager();
-
     bool keepPlaying = true;
     while (keepPlaying) {
         cout << "Choose your action: " << endl;
-        string input = getline();
-        if (input = "exit") 
+        string input;
+	getline(cin, input);
+        if (input == "exit") 
         {
             keepPlaying = false;
             break;
         }
 
-        else if (input = "recruit") 
+        else if (input == "recruit") 
         {
             recruitVillager();
             cout << "Number of villagers: " << getVillagers() << endl;
@@ -50,4 +44,5 @@ int main () {
 
         printVillage(villagePtr);
     }
+    return 0;
 }
