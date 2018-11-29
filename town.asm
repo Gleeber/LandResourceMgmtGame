@@ -115,12 +115,13 @@ ret
 buildWall:
     mov eax, [esp+4] ; village pointer
 
-    sub DWORD[funds],1
+    sub DWORD[funds],1 ; cost of wall
     add DWORD[walls],1
 
     mov BYTE[eax],'W'           ; Add 'W' to village
 ret
 
+;****************** Time *****************************
 moveTime:
     mov ecx, 0
     farmLoop:
