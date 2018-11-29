@@ -15,12 +15,19 @@ extern "C" void printVillage(char *);
 extern "C" void recruitVillager();
 extern "C" int getVillagers();
 
+extern "C" void addFunds();
+extern "C" int getFunds();
+
 int main () {
     char *villagePtr = buildVillage();
-    printVillage(villagePtr);
+    //do{
+	cout << "Coin: " << getFunds() << endl;
+	cout << "Number of villagers: " << getVillagers() << endl;
 
-    recruitVillager();
-    recruitVillager();
-    cout << "Number of villagers: " << getVillagers() << endl;
-    return 0;
+	printVillage(villagePtr);
+	recruitVillager();
+	recruitVillager();
+
+   // }while(input != "exit")	
+	return 0;
 }

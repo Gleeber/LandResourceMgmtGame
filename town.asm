@@ -6,6 +6,9 @@ global printVillage
 global recruitVillager
 global getVillagers
 
+global addFunds
+global getFunds
+
 extern printf
 
 testingFunction:
@@ -65,6 +68,9 @@ printVillagers:
 ret
 
 
+addFunds:
+    add DWORD[funds],1
+ret
 
 getFunds:
     mov eax, DWORD[funds]
