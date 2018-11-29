@@ -27,22 +27,34 @@ int main () {
     char *villagePtr = buildVillage();
     bool keepPlaying = true;
     while (keepPlaying) {
-        cout << "Choose your action: " << endl;
-        string input;
+        cout << "Number of villagers: " << getVillagers() << endl;
+        cout << "Coin: " << getFunds() << endl;
+        cout << "Choose your action:\ne \t exits\nr \t recruit Villager\nf \t build a farm ("<<"#" << "//2)\nw \t walls\n>:";
+	string input;
 	getline(cin, input);
-        if (input == "exit") 
+        if (input == "e") 
         {
             keepPlaying = false;
+	    cout << "Farewell!" << endl;
             break;
         }
 
-        else if (input == "recruit") 
+        else if (input == "r") 
         {
             recruitVillager();
-            cout << "Number of villagers: " << getVillagers() << endl;
-        }
+	}
+        
+	else if (input == "f") 
+        {
+            //build a farm here, would give income limit farms?
+	}
 
-        printVillage(villagePtr);
+        else if (input == "w") 
+        {
+            //build walls here, maybe have upgrade table/cost of upgrades?
+	}
+	
+	printVillage(villagePtr);
     }
     return 0;
 }

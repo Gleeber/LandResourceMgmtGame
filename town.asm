@@ -49,7 +49,9 @@ printVillage:
     
     push printNewLine
     call printf
-    add esp,4
+    push printNewLine
+    call printf
+     add esp,8
 ret
 
 recruitVillager: 
