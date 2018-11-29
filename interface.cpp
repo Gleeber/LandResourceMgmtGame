@@ -5,6 +5,7 @@
 
 #include <iostream>
 using std::cout;
+using std::cin;
 using std::endl;
 #include <string>
 using std::string;
@@ -24,31 +25,24 @@ extern "C" int getFunds();
 
 int main () {
     char *villagePtr = buildVillage();
-    //do{
-	cout << "Coin: " << getFunds() << endl;
-	cout << "Number of villagers: " << getVillagers() << endl;
-
-	printVillage(villagePtr);
-	recruitVillager();
-	recruitVillager();
-
     bool keepPlaying = true;
     while (keepPlaying) {
         cout << "Choose your action: " << endl;
-        string input = getline();
-        if (input = "exit") 
+        string input = "";
+	getline(cin, input);
+        if (input == "exit") 
         {
-            keepPlaying = false;
+            keepPlaying == false;
             break;
         }
 
-        else if (input = "recruit") 
+        else if (input == "recruit") 
         {
             recruitVillager();
             cout << "Number of villagers: " << getVillagers() << endl;
         }
 
         printVillage();
-        return 0;
     }
+    return 0;
 }
