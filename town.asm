@@ -60,12 +60,6 @@ getVillagers:
     mov eax, DWORD[villagers]
 ret
 
-printVillagers:
-
-ret
-
-
-
 getFunds:
     mov eax, DWORD[funds]
 ret
