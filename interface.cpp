@@ -48,7 +48,6 @@ int main () {
             cout << "Number of villagers: " << getVillagers() << endl;
         }
 
-        printVillage();
-        return 0;
+        printVillage(villagePtr);
     }
 }
