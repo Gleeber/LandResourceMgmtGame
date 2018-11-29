@@ -38,11 +38,11 @@ int main () {
         string input = getline();
         if (input = "exit") 
         {
-            keepPlaying = false;
+            keepPlaying == false;
             break;
         }
 
-        else if (input = "recruit") 
+        else if (input == "recruit") 
         {
             recruitVillager();
             cout << "Number of villagers: " << getVillagers() << endl;
