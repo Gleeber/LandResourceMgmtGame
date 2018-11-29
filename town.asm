@@ -66,8 +66,6 @@ recruitVillager:
     add DWORD[villagers],1
     add DWORD[villagers+4],1
     sub DWORD[funds],1
-    call getVillagers
-    call getFunds
 ret
 
 getVillagers:
@@ -85,12 +83,12 @@ buildFarm:
     cmp DWORD[villagers + 4],0
     jg farmSuccess
 
-    mov eax,DWORD[notEnoughVillagers]
+    mov eax,DWORD[notEnoughVillagers]               ; Error message = 2
     jmp return
 
     farmSuccess:
         mov ecx, 0
-        findFarm:
+        findFarm:                       ; Find next free space in village
             cmp BYTE[eax + ecx],'_'
             je addFarmToVillage
 
@@ -98,13 +96,13 @@ buildFarm:
             cmp ecx,[villageSize]
             jl findFarm
 
-            mov eax,DWORD[notEnoughVillageSpace]
+            mov eax,DWORD[notEnoughVillageSpace]    ; Error message = 3
             jmp return
 
         
         addFarmToVillage:
-        mov BYTE[eax + ecx],'F'
-        sub DWORD[villagers + 4], 1
+        mov BYTE[eax + ecx],'F'         ; Add 'F' to village
+        sub DWORD[villagers + 4], 1     ; Subtract 1 from available villagers
         add DWORD[farms],1
 
         mov eax,0
@@ -120,13 +118,14 @@ buildWall:
     sub DWORD[funds],1
     add DWORD[walls],1
 
-    mov BYTE[eax],'W'
+    mov BYTE[eax],'W'           ; Add 'W' to village
 ret
 
 moveTime:
     mov ecx, 0
     farmLoop:
-        add DWORD[funds],1
+        add DWORD[funds],1      ; Add 1 to funds for each farm
+                                ; Amount to add subject to change
 
         add ecx, 1
         cmp ecx, DWORD[farms]
@@ -167,7 +166,6 @@ section .data
 villagers: 
     dd 0        ; Total villagers
     dd 0        ; Available villagers
-    db 'Number of villagers: ',0
 
 walls:
     dd 0

@@ -85,7 +85,7 @@ int main () {
         }
         printVillage(villagePtr);
 
-        gotoxy(line,charSpaces);
+        gotoxy(line,charSpaces);        // Move cursor to the ">:" to get input
 	    string input;
 	    getline(cin, input);
         if (input == "e") 
@@ -117,7 +117,7 @@ int main () {
             buildWall(villagePtr);
 	    }
 
-        else
+        else        // When an unexpected input is given
         {
             errorMessage = 1;
             continue;
