@@ -5,7 +5,13 @@ global printVillage
 
 global recruitVillager
 global getVillagers
+global getVillagersAvail
 
+global buildFarm
+
+global buildWall
+
+global moveTime
 global addFunds
 global getFunds
 
@@ -15,6 +21,7 @@ testingFunction:
     
 ret
 
+; **************** Village Functions ********************
 buildVillage:
     mov edi,[villageSize]    ; Village size (in bytes)
     extern malloc
@@ -51,11 +58,13 @@ printVillage:
     call printf
     push printNewLine
     call printf
-     add esp,8
+    add esp,8
 ret
 
+; **************** Villager Functions ********************
 recruitVillager: 
     add DWORD[villagers],1
+    add DWORD[villagers+4],1
     sub DWORD[funds],1
     call getVillagers
     call getFunds
@@ -65,11 +74,66 @@ getVillagers:
     mov eax, DWORD[villagers]
 ret
 
-printVillagers:
-
+getVillagersAvail:
+    mov eax, DWORD[villagers + 4]
 ret
 
+; **************** Farm Functions ********************
+buildFarm:
+    mov eax, [esp+4] ; village pointer
 
+    cmp DWORD[villagers + 4],0
+    jg farmSuccess
+
+    mov eax,DWORD[notEnoughVillagers]
+    jmp return
+
+    farmSuccess:
+        mov ecx, 0
+        findFarm:
+            cmp BYTE[eax + ecx],'_'
+            je addFarmToVillage
+
+            add ecx,1
+            cmp ecx,[villageSize]
+            jl findFarm
+
+            mov eax,DWORD[notEnoughVillageSpace]
+            jmp return
+
+        
+        addFarmToVillage:
+        mov BYTE[eax + ecx],'F'
+        sub DWORD[villagers + 4], 1
+        add DWORD[farms],1
+
+        mov eax,0
+        jmp return
+
+    return:
+ret
+
+; **************** Wall Functions ********************
+buildWall:
+    mov eax, [esp+4] ; village pointer
+
+    sub DWORD[funds],1
+    add DWORD[walls],1
+
+    mov BYTE[eax],'W'
+ret
+
+moveTime:
+    mov ecx, 0
+    farmLoop:
+        add DWORD[funds],1
+
+        add ecx, 1
+        cmp ecx, DWORD[farms]
+        jl farmLoop
+ret
+
+; **************** Funds Functions ********************
 addFunds:
     add DWORD[funds],1
 ret
@@ -92,12 +156,24 @@ printChar:
     db `a`,0
 
 villageSize:
-    dd 15
+    dd 10
+
+notEnoughVillagers:
+    dd 2
+notEnoughVillageSpace:
+    dd 3
 
 section .data
 villagers: 
-    dd 0
+    dd 0        ; Total villagers
+    dd 0        ; Available villagers
     db 'Number of villagers: ',0
+
+walls:
+    dd 0
+
+farms:
+    dd 0
 
 funds:
     dd 100
