@@ -171,72 +171,74 @@ ret
 buildWall:
     mov edi, [esp+4] ; village pointer
 
-    cmp DWORD[funds],25
-    mov eax,DWORD[notEnoughFunds]
+    cmp DWORD[funds],25             ; Check for sufficient funds
+    mov eax,DWORD[notEnoughFunds]   ; message = 6
     jl wallsBuilt
 
-    cmp DWORD[walls],4
-    mov eax,DWORD[wallMaxLevel]
+    cmp DWORD[walls],4              ; Check for fully upgraded walls
+    mov eax,DWORD[wallMaxLevel]     ; message = 7
     je wallsBuilt
 
-    mov eax,0
+    mov eax,0                       ; message = 0
 
-    sub DWORD[funds],25 ; cost of wall
-    add DWORD[walls],1
+    sub DWORD[funds],25             ; cost of wall
+    add DWORD[walls],1              ; Update number of walls
 
-        mov BYTE[edi],'w'
+        mov BYTE[edi],'w'           ; 1 level 1 wall (at start of villagePtr)
         
-        cmp DWORD[walls],2
+        cmp DWORD[walls],2          ; Walls at level 2
         jl wallsBuilt
 
-        mov BYTE[edi],'W'
-        cmp DWORD[walls],3
+        mov BYTE[edi],'W'           ; 1 level 2 wall
+        cmp DWORD[walls],3          ; Walls at level 3
         jl wallsBuilt
 
-        mov edx,DWORD[villageSize]
+        mov edx,DWORD[villageSize]  ; Move to end of villagePtr
         sub edx,1
-        mov BYTE[edi+edx],'w'
-        cmp DWORD[walls],4
+        mov BYTE[edi+edx],'w'       ; 2nd wall at level 1
+        cmp DWORD[walls],4          ; Walls at level 4
         jl wallsBuilt
 
-        mov BYTE[edi+edx],'W'           ; Add 'W' to village
+        mov BYTE[edi+edx],'W'       ; 2nd wall at level 2
     wallsBuilt:
 ret
 
+; Return current number of walls
 getWalls:
     mov eax,DWORD[walls]
 ret
 
 ;****************** Time *****************************
+; Progress time by one hour
 moveTime:
-    mov eax, [esp+4] ; village pointer
+    mov eax, [esp+4]                ; village pointer
+
     mov ecx, 0
     mov edi,DWORD[farmPtr]
-    farmLoop:
-        cmp DWORD[edi+ecx*4],1
+    farmLoop:                       ; Loop through farmPtr
+        cmp DWORD[edi+ecx*4],1      ; Check for 1 in farm's value
         jne noFundsAdded
-        add DWORD[funds],1      ; Add 1 to funds for each farm
-                                ; Amount to add subject to change
+        add DWORD[funds],1          ; Add 1 to funds for each farm
 
         noFundsAdded:
-        add ecx, 1
+        add ecx, 1                  ; Increment loop
         cmp ecx, DWORD[farms]
         jl farmLoop
     
     mov edx,DWORD[timeToMakeFarm]
     mov ecx, 0
     upgradeFarms:
-        cmp DWORD[edi+ecx*4],edx
+        cmp DWORD[edi+ecx*4],edx    ; Once a farm at -4 is reached, farms are done
         jl upgradeFarmsDone
-        cmp DWORD[edi+ecx*4],1
+        cmp DWORD[edi+ecx*4],1      ; A farm already at '1' doesn't need to be updated
         je upgradeFarmsNextLoop
         
-        add DWORD[edi+ecx*4],1
+        add DWORD[edi+ecx*4],1      ; Otherwise, adds 1 to farm's value
 
-        cmp DWORD[edi+ecx*4],1
+        cmp DWORD[edi+ecx*4],1      ; If the farm has been built
         jne upgradeFarmsNextLoop
-        add ecx,1
-        mov BYTE[eax+ecx],'F'
+        add ecx,1                   ; Account for indexing at 0
+        mov BYTE[eax+ecx],'F'       ; Replace 'f' with 'F' in village
         sub ecx,1
 
         upgradeFarmsNextLoop:
@@ -245,32 +247,36 @@ moveTime:
             jl upgradeFarms
         upgradeFarmsDone:
 
-    add DWORD[hour],1
-    cmp DWORD[hour],24
+    add DWORD[hour],1               ; Increment time
+    cmp DWORD[hour],24              ; Reset time to 00:00 at 23:00
     jl dontResetTime
     mov DWORD[hour],0
 
     cmp DWORD[attackChancePerNight],100
     je dontResetTime
-    add DWORD[attackChancePerNight],10
+    add DWORD[attackChancePerNight],10  ; Chance for attack increases each day
     dontResetTime:
 ret
 
+; Returns the current time
 getTime:
     mov eax,DWORD[hour]
 ret
 
+; The current chance for attack
 getAttackChance:
     mov eax,DWORD[attackChancePerNight]
 ret
 
+; When the village is attacked
 attack:
-    mov edi, [esp+4] ; village pointer
+    mov edi, [esp+4]                ; Village pointer
+
     mov eax,0
-    cmp DWORD[walls],0
+    cmp DWORD[walls],0              ; If there are no walls when attacked, player loses
     je gameOver
 
-        sub DWORD[walls],1
+        sub DWORD[walls],1          ; Decrease walls' level
         mov edx,DWORD[villageSize]
         sub edx,1
         mov BYTE[edi+edx],'w'
@@ -290,31 +296,26 @@ attack:
         jmp attackReturn
 
     gameOver:
-    mov eax,DWORD[gameOverMessage]
+    mov eax,DWORD[gameOverMessage]  ; message = 5: game over
     attackReturn:
 ret
 
 ; **************** Funds Functions ********************
+; Returns current funds
 getFunds:
     mov eax, DWORD[funds]
 ret
 
-space:
-    db ' ',0
-
 villageFormat:
-    db ` %c`,0
+    db ` %c`,0          ; Format string for printing village
 
-;section .data
 printNewLine:
-	db `\n`,0
-
-printChar:
-    db `a`,0
+	db `\n`,0                             
 
 villageSize:
-    dd 10
+    dd 10               ; Size of village - used in buildVillage
 
+; Various error messages
 notEnoughVillagers:
     dd 2
 notEnoughVillageSpace:
@@ -332,25 +333,25 @@ villagers:
     dd 0        ; Available villagers
 
 walls:
-    dd 0
+    dd 0        ; Number of walls
 
 farms:
-    dd 0
+    dd 0        ; Number of farms
 
 numPossibleFarms:
-    dd 0
+    dd 0        ; Available spots for farms
 
 timeToMakeFarm:
-    dd -3
+    dd -3       ; Time a farm starts at before being fully built
 
 farmPtr:
     dd 0        ; Pointer to array with farm information
 
 funds:
-    dd 10
+    dd 10       ; Amount of starting funds
 
 hour:
-    dd 9
+    dd 9        ; Starting hour
 
 attackChancePerNight:
-    dd 0
+    dd 0        ; Starting chance for attack
